@@ -78,6 +78,7 @@ function checkR() {
 function renderS3() {
     updateHeader(3); 
     let r = activeRs[curRi]; 
+    if(!r) return;
     let count = ps.filter(p => p.r === r).length;
     document.getElementById('roleLimitInfo').innerText = `Выбрано: ${count} из ${rs[r]}`;
     document.getElementById('l3').innerHTML = ps.map((p, i) => `<div class="r ${p.r===r?'sel':''} ${p.r!=='Citizen'&&p.r!==r?'isOut':''}" onclick="setRole(${i},'${r}')"><b>${i+1}</b> ${p.n||'Игрок '+(i+1)} ${p.r!=='Citizen' ? `<span class="tag ${rD[p.r].c}">${rD[p.r].n}</span>` : ''}</div>`).join('');
@@ -213,28 +214,46 @@ function doAction(id) {
     } else {
         acts[activeNRs[curNi]] = id; 
         let roleNow = rD[activeNRs[curNi]].n; 
-        curNi++; selId = null;
-        if (curNi >= activeNRs.length) showMsg(roleNow + " засыпает", "Все сделали ход.", () => endNight()); 
-        else showMsg(roleNow + " засыпает", "Просыпается: " + rD[activeNRs[curNi]].n, () => renderGame());
+        curNi++; 
+        selId = null;
+        if (curNi >= activeNRs.length) {
+            showMsg(roleNow + " засыпает", "Все сделали ход.", () => endNight()); 
+        } else {
+            showMsg(roleNow + " засыпает", "Просыпается: " + rD[activeNRs[curNi]].n, () => renderGame());
+        }
     }
 }
 
 function endNight() {
-    let killed = [], savedId = acts['Doctor']; lastDocId = savedId;
-    if (acts['Mafia'] !== null && acts['Mafia'] !== undefined && acts['Mafia'] !== savedId) killed.push(acts['Mafia']);
-    if (acts['Maniac'] !== null && acts['Maniac'] !== undefined && acts['Maniac'] !== savedId && !killed.includes(acts['Maniac'])) killed.push(acts['Maniac']);
+    let killed = [], savedId = acts['Doctor']; 
+    lastDocId = savedId;
+    
+    // Обработка убийств
+    if (acts['Mafia'] !== null && acts['Mafia'] !== undefined && acts['Mafia'] !== savedId) {
+        killed.push(acts['Mafia']);
+    }
+    if (acts['Maniac'] !== null && acts['Maniac'] !== undefined && acts['Maniac'] !== savedId && !killed.includes(acts['Maniac'])) {
+        killed.push(acts['Maniac']);
+    }
     
     killed.forEach(idx => { if (ps[idx]) ps[idx].out = true; });
     let msg = killed.length ? `Погибли: ${killed.map(idx => ps[idx].n || '№' + (idx+1)).join(", ")}` : "Никто не погиб.";
     
-    if (acts['Detective'] !== null && acts['Detective'] !== undefined) {
-        let target = ps[acts['Detective']];
-        if (target) {
-            if (!checkedIds.includes(acts['Detective'])) checkedIds.push(acts['Detective']);
-            let isEvil = (target.r === 'Mafia' || target.r === 'Maniac');
-            msg += `<br><br><small>Комиссар проверил <b>${target.n || '№'+(acts['Detective']+1)}</b>: ${isEvil ? 'ПРЕСТУПНИК 👺' : 'МИРНЫЙ 😊'}</small>`;
-        }
+    // Безопасная проверка Комиссара
+    let detTargetIdx = acts['Detective'];
+    if (detTargetIdx !== null && detTargetIdx !== undefined && ps[detTargetIdx]) {
+        let target = ps[detTargetIdx];
+        if (!checkedIds.includes(detTargetIdx)) checkedIds.push(detTargetIdx);
+        let isEvil = (target.r === 'Mafia' || target.r === 'Maniac');
+        msg += `<br><br><small>Комиссар проверил <b>${target.n || '№'+(detTargetIdx+1)}</b>: ${isEvil ? 'ПРЕСТУПНИК 👺' : 'МИРНЫЙ 😊'}</small>`;
     }
-    isDay = true; ps.forEach(p => p.v = 0); tiePs = []; curNi = 0;
-    if (!checkWin()) showMsg("Утро наступило ☀️", msg, () => go(4));
+
+    isDay = true; 
+    ps.forEach(p => p.v = 0); 
+    tiePs = []; 
+    curNi = 0;
+
+    if (!checkWin()) {
+        showMsg("Утро наступило ☀️", msg, () => go(4));
+    }
 }
