@@ -114,8 +114,8 @@ function startNight() {
 
 function renderGame() {
     updateHeader(4); 
-    const voteStat = document.getElementById('voteStat'), 
-          nightPanel = document.getElementById('nightStatusPanel'), 
+    const vStat = document.getElementById('voteStat'), 
+          nPanel = document.getElementById('nightStatusPanel'), 
           skB = document.getElementById('skB'), 
           cfB = document.getElementById('cfB'), 
           l4 = document.getElementById('l4');
@@ -125,34 +125,38 @@ function renderGame() {
     if (!isDay) {
         currentRole = activeNRs[curNi];
         actorIds = ps.map((p, i) => (p.r === currentRole && !p.out) ? i : null).filter(x => x !== null);
-        nightPanel.innerHTML = `<div class="actor-card">Ходит: ${rD[currentRole].n}</div>`;
+        nPanel.innerHTML = `<div class="actor-card">Ходит: ${rD[currentRole].n}</div>`;
         cfB.innerText = (curNi === activeNRs.length - 1) ? "Город просыпается ☀️" : "Следующий ход";
         cfB.style.display = (selId !== null) ? "flex" : "none"; 
         skB.style.display = (selId === null) ? "flex" : "none";
     } else {
-        nightPanel.innerHTML = ""; 
-        let totalV = ps.reduce((s, p) => s + p.v, 0), 
-            aliveC = ps.filter(p => !p.out).length;
-        voteStat.innerText = `Голосов: ${totalV} / ${aliveC}`; 
+        nPanel.innerHTML = ""; 
+        let totalV = ps.reduce((s, p) => s + p.v, 0), aliveC = ps.filter(p => !p.out).length;
+        vStat.innerText = `Голосов: ${totalV} / ${aliveC}`; 
         cfB.innerText = "Завершить день"; 
         cfB.style.display = (totalV > 0) ? "flex" : "none"; 
         skB.style.display = (totalV === 0 && tiePs.length === 0) ? "flex" : "none"; 
+        skB.innerText = "Никто не ушел";
     }
 
     l4.innerHTML = ps.map((p, i) => {
         let extra = '', state = '', click = true;
         const isTie = tiePs.length === 0 || tiePs.includes(i);
+        const isActor = !isDay && actorIds.includes(i);
         
         if (!isDay) {
-            if (currentRole === 'Doctor' && i === lastDocId) { extra = `<small style="color:#ff9f0a;margin-left:8px">(Нельзя подряд)</small>`; state = 'locked'; click = false; }
-            if (currentRole === 'Detective' && checkedIds.includes(i)) { extra = `<small style="color:#0a84ff;margin-left:8px">(Проверен)</small>`; state = 'locked'; click = false; }
+            if (currentRole === 'Doctor' && i === lastDocId) { extra = ` (Нельзя подряд)`; state = 'locked'; click = false; }
+            if (currentRole === 'Detective') {
+                if (checkedIds.includes(i)) { extra = ` (Проверен)`; state = 'locked'; click = false; }
+                if (isActor) { extra = ` (Это вы)`; state = 'locked'; click = false; }
+            }
         }
         
         if (p.out) { state = 'isOut'; click = false; }
         if (isDay && !isTie) { state = 'isOut'; click = false; }
 
         return `<div class="r ${state} ${selId === i ? 'sel' : ''}" onclick="${click ? `clickP(${i})` : ''}">
-            <b>${i+1}</b> <span>${p.n||'Игрок '+(i+1)}</span> ${extra} 
+            <b>${i+1}</b> <span>${p.n||'Игрок '+(i+1)}</span> <small style="color:#ff9f0a">${extra}</small>
             <span class="tag ${rD[p.r].c}">${rD[p.r].n}</span>
             ${isDay && !p.out ? `<div class="v-wrap" onclick="event.stopPropagation()"><button class="v-btn" onclick="vote(${i},-1)">-</button><div class="v-cnt">${p.v}</div><button class="v-btn" onclick="vote(${i},1)">+</button></div>` : ''}
         </div>`;
@@ -179,18 +183,9 @@ function checkWin() {
     let mans = alive.filter(p => p.r === 'Maniac').length;
     let others = alive.length - mafs; 
 
-    if (mafs > 0 && mafs >= others) { 
-        showWin("Победа Мафии! 👺", "Мафия захватила город."); 
-        return true; 
-    }
-    if (mans > 0 && mafs === 0 && alive.length <= 2) {
-        showWin("Победа Маньяка! 🔪", "Маньяк устранил всех.");
-        return true;
-    }
-    if (mafs === 0 && mans === 0) { 
-        showWin("Победа Города! 😊", "Все преступники пойманы."); 
-        return true; 
-    }
+    if (mafs > 0 && mafs >= others) { showWin("Победа Мафии! 👺", "Мафия захватила город."); return true; }
+    if (mans > 0 && mafs === 0 && alive.length <= 2) { showWin("Победа Маньяка! 🔪", "Маньяк победил."); return true; }
+    if (mafs === 0 && mans === 0) { showWin("Победа Города! 😊", "Все преступники устранены."); return true; }
     return false;
 }
 
@@ -209,10 +204,7 @@ function doAction(id) {
             let victim = leaders[0];
             victim.out = true; 
             if (!checkWin()) {
-                showMsg("Голосование", `${victim.n || "Игрок №" + (ps.indexOf(victim) + 1)} покидает город.`, () => { 
-                    night++; 
-                    startNight(); 
-                });
+                showMsg("Голосование", `${victim.n || "Игрок №" + (ps.indexOf(victim) + 1)} покидает город.`, () => { night++; startNight(); });
             }
         } else { 
             if (tiePs.length > 0) showMsg("Ничья", "Никто не уходит.", () => { night++; startNight(); }); 
@@ -228,22 +220,21 @@ function doAction(id) {
 }
 
 function endNight() {
-    let killed = [], savedId = acts['Doctor']; 
-    lastDocId = savedId;
-    
-    if (acts['Mafia'] !== undefined && acts['Mafia'] !== null && acts['Mafia'] !== savedId) killed.push(acts['Mafia']);
-    if (acts['Maniac'] !== undefined && acts['Maniac'] !== null && acts['Maniac'] !== savedId && !killed.includes(acts['Maniac'])) killed.push(acts['Maniac']);
+    let killed = [], savedId = acts['Doctor']; lastDocId = savedId;
+    if (acts['Mafia'] !== null && acts['Mafia'] !== undefined && acts['Mafia'] !== savedId) killed.push(acts['Mafia']);
+    if (acts['Maniac'] !== null && acts['Maniac'] !== undefined && acts['Maniac'] !== savedId && !killed.includes(acts['Maniac'])) killed.push(acts['Maniac']);
     
     killed.forEach(idx => { if (ps[idx]) ps[idx].out = true; });
     let msg = killed.length ? `Погибли: ${killed.map(idx => ps[idx].n || '№' + (idx+1)).join(", ")}` : "Никто не погиб.";
     
-    if (acts['Detective'] !== undefined && acts['Detective'] !== null) {
+    if (acts['Detective'] !== null && acts['Detective'] !== undefined) {
         let target = ps[acts['Detective']];
-        if (!checkedIds.includes(acts['Detective'])) checkedIds.push(acts['Detective']);
-        let result = (target.r === 'Mafia' || target.r === 'Maniac') ? 'ПРЕСТУПНИК 👺' : 'МИРНЫЙ 😊';
-        msg += `<br><br><small>Комиссар проверил <b>${target.n || '№'+(acts['Detective']+1)}</b>: ${result}</small>`;
+        if (target) {
+            if (!checkedIds.includes(acts['Detective'])) checkedIds.push(acts['Detective']);
+            let isEvil = (target.r === 'Mafia' || target.r === 'Maniac');
+            msg += `<br><br><small>Комиссар проверил <b>${target.n || '№'+(acts['Detective']+1)}</b>: ${isEvil ? 'ПРЕСТУПНИК 👺' : 'МИРНЫЙ 😊'}</small>`;
+        }
     }
-
     isDay = true; ps.forEach(p => p.v = 0); tiePs = []; curNi = 0;
     if (!checkWin()) showMsg("Утро наступило ☀️", msg, () => go(4));
 }
