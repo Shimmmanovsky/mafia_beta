@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <style>
+        *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        body{font-family:sans-serif;background:#000;color:#fff;margin:0;padding:12px;padding-bottom:120px}
+        .s{display:none;opacity:0;transition:opacity .3s}
+        .a{display:block;opacity:1}
+        h2{font-weight:400;border-bottom:1px solid #333;padding-bottom:10px;font-size:18px}
+        .r{background:#1c1c1e;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;user-select:none;touch-action:none}
+        
+        /* Исправленное центрирование: теперь элементы в ряд, по центру вертикали */
+        .btn{border:none;border-radius:12px;padding:16px;width:100%;font-weight:600;cursor:pointer;color:#fff;font-size:15px;display:flex;flex-direction:row;justify-content:center;align-items:center;text-align:center;gap:8px;min-height:54px}
+        
+        .b-b{background:#0a84ff}.b-g{background:#30d158}.b-o{background:#2c2c2e}.b-r{background:#ff453a}
+        .f-b{position:fixed;bottom:0;left:0;right:0;background:#141414;padding:15px;display:flex;gap:10px;border-top:1px solid #333;z-index:1000}
+        input{background:none;border:none;color:#fff;font-size:17px;flex:1;border-bottom:1px solid #333;outline:none}
+        .c-b{background:#3a3a3c;color:#fff;border:none;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+        .tag{font-size:10px;padding:3px 6px;border-radius:4px;text-transform:uppercase;font-weight:800;display:inline-block;width:fit-content;margin-left:auto}
+        .tag-Mafia{background:#ff453a}.tag-Detective{background:#30d158}.tag-Citizen{background:#8e8e93}.tag-Doctor{background:#5e5ce6}.tag-Maniac{background:#af52de}
+        .dead{opacity:.25;filter:grayscale(1);pointer-events:none}
+        .sel{outline:2px solid #30d158;background:#1c3d25!important}
+        #vB{background:#1c1c1e;border:1px solid #333;padding:15px;border-radius:15px;margin-bottom:15px}
+        #hist, #winScr{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:2000;padding:20px;flex-direction:column;overflow-y:auto}
+        .log-item{border-left:3px solid #0a84ff;padding-left:10px;margin-bottom:15px;font-size:14px;line-height:1.4;background:#1c1c1e;padding:10px;border-radius:0 8px 8px 0}
+        .p-info{display:flex;justify-content:space-between;align-items:center;width:100%}
+        .dragging{opacity:0.5;background:#2c2c2e;transform:scale(1.02);z-index:10}
+        .drag-hint{font-size:12px;color:#8e8e93;text-align:center;margin-bottom:10px}
+    </style>
+</head>
+<body>
+
+<div id="hist">
+    <h2>📜 Хронология событий</h2>
+    <div id="histL"></div>
+    <button class="btn b-o" onclick="document.getElementById('hist').style.display='none'">Закрыть</button>
+</div>
+
+<div id="winScr">
+    <div style="margin: auto; width: 100%;">
+        <h1 id="winTitle" style="font-size:42px; margin:0 0 10px 0; color:#30d158"></h1>
+        <p id="winDesc" style="color:#8e8e93; margin-bottom:30px; font-size:18px"></p>
+        <button class="btn b-g" onclick="location.reload()">Начать новую игру</button>
+    </div>
+</div>
+
+<div id="s1" class="s a">
+    <h2>1. Игроки <span id="pc">0</span></h2>
+    <div id="l1"></div>
+    <div class="f-b">
+        <button class="btn b-b" onclick="addP()">+ Игрок</button>
+        <button class="btn b-g" onclick="go(2)">Далее</button>
+    </div>
+</div>
+
+<div id="s2" class="s">
+    <h2>2. Роли</h2>
+    <div id="lp"></div>
+    <div style="text-align:center;padding:20px;color:#8e8e93">Мирных 😊: <b id="cc" style="color:#fff">0</b></div>
+    <div class="f-b">
+        <button class="btn b-o" onclick="go(1)">Назад</button>
+        <button class="btn b-g" onclick="go(3)">Далее</button>
+    </div>
+</div>
+
+<div id="s3" class="s">
+    <h2>3. Порядок ходов</h2>
+    <div class="drag-hint">Зажмите и тяните роль для смены порядка ↕️</div>
+    <div id="ol"></div>
+    <div class="f-b">
+        <button class="btn b-o" onclick="go(2)">Назад</button>
+        <button class="btn b-g" onclick="prepA()">К знакомству</button>
+    </div>
+</div>
+
+<div id="s4" class="s">
+    <h2>4. Знакомство <span id="as" style="float:right;color:#8e8e93"></span></h2>
+    <div id="vB">
+        <h3 id="at" style="margin:0 0 10px 0;font-weight:400"></h3>
+        <div id="pl"></div>
+    </div>
+    <div class="f-b">
+        <button class="btn b-o" onclick="prvA()">Назад</button>
+        <button class="btn b-g" id="an" style="display:none" onclick="ai++;nxtA()">Подтвердить</button>
+    </div>
+</div>
+
+<div id="s5" class="s">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 id="gh" style="border:0">Игровой процесс</h2>
+        <button class="btn b-o" style="width:auto;padding:8px 12px;margin:0" onclick="shH()">📜 История</button>
+    </div>
+    <div id="vB">
+        <div id="ph" style="color:#0a84ff;margin-bottom:10px;font-weight:600;font-size:14px"></div>
+        <div id="activeList">
+            <h3 id="rt" style="margin:0 0 10px 0;font-size:16px;font-weight:400"></h3>
+            <div id="sumContent" style="display:none"></div>
+            <div id="mainPlayerList"></div>
+        </div>
+    </div>
+
+    <div class="f-b">
+        <button id="bkB" class="btn b-o" style="display:none" onclick="if(ci>0){ci--;stepN()}">Назад</button>
+        <button id="skB" class="btn b-r" style="display:none" onclick="act[ar()[ci]]='skip';ci++;stepN()">Пропустить ход</button>
+        <button id="cf" class="btn b-g" style="display:none" onclick="ci++;stepN()">ОК</button>
+        
+        <button id="skD" class="btn b-o" style="display:none" onclick="dT=null;nxtPh()">Никто не выбыл</button>
+        <button id="nb" class="btn b-b" style="display:none" onclick="nxtPh()">Подтвердить выбор</button>
+    </div>
+</div>
+
+<script>
+let ps=[{n:'',r:'',d:0,lh:-1},{n:'',r:'',d:0,lh:-1},{n:'',r:'',d:0,lh:-1}],
+    rs={Mafia:1,Maniac:0,Detective:1,Doctor:1},
+    ro=['Mafia', 'Maniac', 'Detective', 'Doctor'],
+    nt=1, cur='setup', ci=0, act={}, ai=0, dT=null, hLog=[],
+    rd={Citizen:{n:'Мирный',e:'😊'},Mafia:{n:'Мафия',e:'👺'},Detective:{n:'Детектив',e:'🕵️‍♂️'},Doctor:{n:'Доктор',e:'💊'},Maniac:{n:'Маньяк',e:'🔪'}};
+
+const ar=()=>ro.filter(r=>rs[r]>0);
+
+function go(n){
+    document.querySelectorAll('.s').forEach(x=>x.classList.remove('a'));
+    document.getElementById('s'+n).classList.add('a');
+    if(n<4)render();
+    if(n===3) initSortable();
+}
+
+function addP(){ps.push({n:'',r:'',d:0,lh:-1});render()}
+function delP(i){ps.splice(i,1);render()}
+
+function render(){
+    const l1=document.getElementById('l1');
+    if(l1) l1.innerHTML = ps.map((p,i)=>`<div class="r"><b style="color:#8e8e93">${i+1}</b><input value="${p.n}" oninput="ps[${i}].n=this.value" placeholder="Имя"> <button class="c-b" onclick="delP(${i})">✕</button></div>`).join('');
+    
+    const lp=document.getElementById('lp');
+    if(lp) lp.innerHTML = Object.keys(rs).map(r=>`<div class="r"><span>${rd[r].e} ${rd[r].n}</span><div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+            <button class="c-b" onclick="rs['${r}']=Math.max(0,rs['${r}']-1);render()">-</button><b>${rs[r]}</b><button class="c-b" onclick="rs['${r}']++;render()">+</button>
+        </div></div>`).join('');
+    
+    const ol=document.getElementById('ol');
+    if(ol) ol.innerHTML = ro.map((r,i)=>rs[r]>0?`<div class="r sort-item" data-role="${r}"><b>≡</b> ${rd[r].e} ${rd[r].n}</div>`:'').join('');
+    
+    document.getElementById('pc').innerText=ps.length;
+    let spec = Object.values(rs).reduce((a,b)=>a+b,0);
+    document.getElementById('cc').innerText = Math.max(0, ps.length - spec);
+}
+
+function initSortable() {
+    const list = document.getElementById('ol');
+    let dragEl = null;
+
+    list.addEventListener('touchstart', e => {
+        dragEl = e.target.closest('.sort-item');
+        if(dragEl) dragEl.classList.add('dragging');
+    }, {passive: false});
+
+    list.addEventListener('touchmove', e => {
+        if(!dragEl) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+        const nextEl = target ? target.closest('.sort-item') : null;
+        if(nextEl && nextEl !== dragEl) {
+            const rect = nextEl.getBoundingClientRect();
+            const next = (touch.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+            list.insertBefore(dragEl, next && nextEl.nextSibling || nextEl);
+        }
+    }, {passive: false});
+
+    list.addEventListener('touchend', () => {
+        if(!dragEl) return;
+        dragEl.classList.remove('dragging');
+        const newOrder = [...list.querySelectorAll('.sort-item')].map(el => el.dataset.role);
+        const inactive = ro.filter(r => rs[r] === 0);
+        ro = [...newOrder, ...inactive];
+        dragEl = null;
+    });
+}
+
+function prepA(){
+    ai=0; ps.forEach(p=>{p.r='';p.d=0;p.lh=-1});
+    cur = 'naming'; go(4); nxtA();
+}
+
+function prvA(){
+    if(ai>0){
+        let r=ar()[ai]; ps.forEach(p=>{if(p.r==r)p.r=''});
+        ai--; nxtA();
+    } else go(3);
+}
+
+function nxtA(){
+    let a=ar();
+    if(ai<a.length){
+        let r=a[ai], l=rs[r], g=ps.filter(x=>x.r==r).length;
+        document.getElementById('at').innerText='Кто '+rd[r].e+' '+rd[r].n+'?';
+        document.getElementById('as').innerText=g+'/'+l;
+        let h='';
+        ps.forEach((p,i)=>{
+            let s=(p.r==r);
+            if(!p.r||s) h+=`<div class="r" style="background:${s?'#1c3d25':'#1c1c1e'};border:1px solid ${s?'#30d158':'transparent'}" onclick="setR(${i},'${r}',${l})"><b style="width:20px;color:#8e8e93">${i+1}</b><div style="flex:1">${p.n||'Игрок '+(i+1)}</div><div style="font-size:20px">${s?'✅':''}</div></div>`
+        });
+        document.getElementById('pl').innerHTML=h;
+        document.getElementById('an').style.display=(g==l)?'block':'none';
+    } else {
+        ps.forEach(p=>{if(!p.r)p.r='Citizen'});
+        nt=1; cur='n'; ci=0; act={}; hLog=[];
+        go(5); stepN();
+    }
+}
+
+function setR(i,r,l){
+    if(ps[i].r==r)ps[i].r='';
+    else if(ps.filter(x=>x.r==r).length<l)ps[i].r=r;
+    nxtA();
+}
+
+function stepN(){
+    if(cur !== 'setup' && cur !== 'naming') checkWin();
+    let a = ar();
+    if(ci < a.length){
+        let r = a[ci];
+        if(ps.some(p => p.r == r && !p.d)) showA(r);
+        else { act[r] = 'skip'; ci++; stepN(); }
+    } else calc();
+}
+
+function showA(r){
+    document.getElementById('ph').innerText='Фаза: Ночь '+nt;
+    document.getElementById('rt').innerText='Ходит: '+rd[r].e+' '+rd[r].n;
+    document.getElementById('sumContent').style.display='none';
+    let h='';
+    ps.forEach((p,i)=>{
+        let isLastHealed = (r=='Doctor' && p.lh === nt-1);
+        let clickAttr = (p.d || isLastHealed) ? '' : `onclick="act['${r}']=+${i};showA('${r}')"`;
+        h+=`<button class="btn b-o ${(act[r]===i)?'sel':''} ${p.d?'dead':''}" style="margin-top:4px" ${clickAttr}>
+            <div class="p-info">
+                <span>#${i+1} ${p.n||'Игрок '+(i+1)}</span>
+                <span class="tag tag-${p.r}">${rd[p.r].e} ${rd[p.r].n}</span>
+            </div>
+            ${isLastHealed ? '<div style="font-size:10px;color:#ff453a;width:100%">⚠️ Нельзя 2 раза подряд</div>' : ''}
+        </button>`;
+    });
+    document.getElementById('mainPlayerList').innerHTML=h;
+    document.getElementById('cf').style.display=(act[r]!==undefined && act[r]!=='skip')?'block':'none';
+    document.getElementById('nb').style.display='none';
+    document.getElementById('skB').style.display='block';
+    document.getElementById('bkB').style.display=(ci > 0 ? 'block' : 'none');
+    document.getElementById('skD').style.display='none';
+}
+
+function calc(){
+    cur='d'; ci=0;
+    document.getElementById('rt').innerText = '';
+    document.getElementById('cf').style.display='none';
+    document.getElementById('skB').style.display='none';
+    document.getElementById('bkB').style.display='none';
+    let mTarget = act.Mafia, mnTarget = act.Maniac, sTarget = act.Doctor, dTarget = act.Detective;
+    let killed = []; let nightDesc = [];
+    if(mTarget !== undefined && mTarget !== 'skip'){
+        if(mTarget === sTarget) nightDesc.push(`👺 Мафия стреляла в <b>${ps[mTarget].n}</b>, но Доктор спас его.`);
+        else { nightDesc.push(`👺 Мафия убила <b>${ps[mTarget].n}</b>.`); killed.push(mTarget); }
+    }
+    if(mnTarget !== undefined && mnTarget !== 'skip'){
+        if(mnTarget === sTarget) nightDesc.push(`🔪 Маньяк напал на <b>${ps[mnTarget].n}</b>, но Доктор вылечил его.`);
+        else { nightDesc.push(`🔪 Маньяк убил <b>${ps[mnTarget].n}</b>.`); killed.push(mnTarget); }
+    }
+    if(dTarget !== undefined && dTarget !== 'skip'){
+        nightDesc.push(`🕵️‍♂️ Детектив проверил <b>${ps[dTarget].n}</b>. Роль: ${rd[ps[dTarget].r].n} ${rd[ps[dTarget].r].e}`);
+    }
+    if(sTarget !== undefined && sTarget !== 'skip') ps[sTarget].lh = nt;
+    let uniqKilled = [...new Set(killed)];
+    uniqKilled.forEach(i => ps[i].d = 1);
+    let summaryHtml = nightDesc.length ? nightDesc.join('<br>') : "🌙 Ночь прошла спокойно.";
+    hLog.push(`<div class="log-item"><b>Ночь ${nt}</b><br>${summaryHtml}</div>`);
+    document.getElementById('ph').innerText = 'Фаза: День ' + nt;
+    let sc = document.getElementById('sumContent');
+    sc.style.display='block';
+    sc.innerHTML = `<div style="background:#1c3d25; padding:12px; border-radius:12px; border:1px solid #30d158; margin-bottom:15px; font-size:15px">${summaryHtml}</div><h3 style="font-weight:400;margin-bottom:10px">Кто покидает город?</h3>`;
+    renderDayVote();
+}
+
+function renderDayVote(){
+    checkWin();
+    let h='';
+    ps.forEach((p,i)=>{
+        let clickAttr = p.d ? '' : `onclick="dT=${i};renderDayVote()"`;
+        h+=`<button class="btn b-o ${dT===i?'sel':''} ${p.d?'dead':''}" style="margin-top:4px" ${clickAttr}>
+            <div class="p-info">
+                <span>#${i+1} ${p.n||'Игрок '+(i+1)}</span>
+                <span class="tag tag-${p.r}">${rd[p.r].e} ${rd[p.r].n}</span>
+            </div>
+        </button>`;
+    });
+    document.getElementById('mainPlayerList').innerHTML=h;
+    document.getElementById('nb').style.display='block';
+    document.getElementById('skD').style.display='block';
+}
+
+function nxtPh(){
+    if(cur=='d'){
+        let dayRes = dT!==null ? `🏛 Жители изгнали <b>${ps[dT].n}</b>.` : `🏛 Жители не выбрали жертву.`;
+        if(dT!==null) ps[dT].d=1;
+        hLog.push(`<div class="log-item" style="border-color:#30d158"><b>День ${nt}</b><br>${dayRes}</div>`);
+        nt++; cur='n'; ci=0; act={}; dT=null;
+        stepN();
+    }
+}
+
+function checkWin() {
+    let alive = ps.filter(p => !p.d);
+    let mafCount = alive.filter(p => p.r === 'Mafia').length;
+    let maniacCount = alive.filter(p => p.r === 'Maniac').length;
+    let citizensCount = alive.length - mafCount - maniacCount;
+    if (mafCount === 0 && maniacCount === 0) showWin("ПОБЕДА МИРНЫХ", "Все преступники устранены!");
+    else if (maniacCount > 0 && mafCount === 0 && alive.length <= 2) showWin("ПОБЕДА МАНЬЯКА", "Город пал.");
+    else if (mafCount > 0 && mafCount >= (citizensCount + maniacCount)) showWin("ПОБЕДА МАФИИ", "Мафия захватила власть.");
+}
+
+function showWin(title, desc) {
+    document.getElementById('winScr').style.display = 'flex';
+    document.getElementById('winTitle').innerText = title;
+    document.getElementById('winDesc').innerText = desc;
+}
+
+function shH(){
+    document.getElementById('histL').innerHTML = hLog.join('');
+    document.getElementById('hist').style.display='block';
+}
+render();
+</script>
+</body>
+</html>
