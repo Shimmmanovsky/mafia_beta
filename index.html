@@ -3,78 +3,581 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-    <title>Mafia Moderator Helper</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Mafia Master 🎭</title>
+    <style>
+/* ========================================
+   Mafia Master - Полное приложение для ведущего
+   ======================================== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,system-ui,system-ui,sans-serif;background:#000;color:#fff;margin:0;padding:80px 18px 140px 18px;overflow-x:hidden}
+
+.s{display:none;position:absolute;top:0;left:0;width:100%;height:100vh}.a{display:block;animation:slideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94)}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+
+.hdr{position:fixed;top:0;left:0;right:0;background:linear-gradient(180deg,rgba(0,0,0,0.98),rgba(20,20,20,0.95));backdrop-filter:blur(20px);z-index:1000;padding:15px 18px;border-bottom:1px solid #333;min-height:64px;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#0a84ff,transparent)}
+h2{font-weight:700;font-size:20px;margin:0;text-shadow:0 2px 8px rgba(0,0,0,0.5);letter-spacing:0.5px}
+
+.r{background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border-radius:20px;padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;border:2px solid transparent;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);position:relative;overflow:hidden}
+.r::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#333,transparent)}
+.r:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.4)}
+.p-num{width:40px;font-weight:800;color:#0a84ff;flex-shrink:0;font-size:20px;text-shadow:0 1px 4px rgba(10,132,255,0.5)}
+.p-info{flex:1;overflow:hidden;padding-right:12px;display:flex;align-items:center} 
+.p-name{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;font-weight:600;letter-spacing:0.3px}
+
+.sel{border-color:#30d158!important;background:linear-gradient(145deg,#1c3d25,#2a4f30)!important;transform:translateY(-4px)!important;box-shadow:0 12px 32px rgba(48,209,88,0.4)!important}
+.sel::after{content:'✓';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#30d158;font-size:20px;font-weight:800}
+.isOut{opacity:0.3!important;filter:grayscale(1);pointer-events:none;transform:scale(0.95)}
+.locked{opacity:0.6;pointer-events:none;border:2px dashed #444;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:0.9}}
+
+.btn{border:none;border-radius:20px;padding:18px 24px;width:100%;font-weight:700;cursor:pointer;color:#fff;font-size:17px;display:flex;justify-content:center;align-items:center;min-height:64px;letter-spacing:0.5px;position:relative;overflow:hidden;transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 6px 20px rgba(0,0,0,0.3);text-transform:uppercase}
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left 0.5s}
+.btn:hover::before{left:100%}
+.btn:active{transform:scale(0.97)}
+.b-b{background:linear-gradient(145deg,#0a84ff,#0066cc);box-shadow:0 6px 20px rgba(10,132,255,0.4)} 
+.b-g{background:linear-gradient(145deg,#30d158,#28a745);box-shadow:0 6px 20px rgba(48,209,88,0.4)}
+.b-o{background:linear-gradient(145deg,#2c2c2e,#3c3c3e);box-shadow:0 6px 20px rgba(44,44,46,0.4)}
+.f-b{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(20,20,20,0.98),rgba(0,0,0,0.95));backdrop-filter:blur(30px);padding:20px 24px 40px 24px;display:flex;gap:16px;border-top:1px solid #333;z-index:1000}
+input{background:none;border:none;color:#fff;font-size:18px;flex:1;border-bottom:2px solid #333;outline:none;padding:8px 0;font-weight:500;transition:border-color 0.3s}
+input:focus{border-bottom-color:#0a84ff}
+
+.del-btn{background:linear-gradient(145deg,#ff453a,#cc3700);border:none;color:#fff;font-weight:700;cursor:pointer;padding:12px 16px;border-radius:16px;font-size:20px;transition:all 0.2s;box-shadow:0 4px 12px rgba(255,69,58,0.4)}
+.del-btn:active{transform:scale(0.95)}
+
+.tag{font-size:11px;padding:6px 12px;border-radius:12px;text-transform:uppercase;font-weight:800;color:#fff;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.tag-Mafia{background:linear-gradient(145deg,#ff453a,#cc3700);box-shadow:0 4px 12px rgba(255,69,58,0.4)}
+.tag-Detective{background:linear-gradient(145deg,#30d158,#28a745);box-shadow:0 4px 12px rgba(48,209,88,0.4)}
+.tag-Citizen{background:linear-gradient(145deg,#8e8e93,#6c6c70);box-shadow:0 2px 8px rgba(142,142,147,0.4)}
+.tag-Doctor{background:linear-gradient(145deg,#5e5ce6,#4a48cc);box-shadow:0 4px 12px rgba(94,92,230,0.4)}
+.tag-Maniac{background:linear-gradient(145deg,#af52de,#9b3fcc);box-shadow:0 4px 12px rgba(175,82,222,0.4)}
+
+.v-btn{width:44px;height:44px;background:linear-gradient(145deg,#0a84ff,#0066cc);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;border:none;font-weight:800;font-size:24px;box-shadow:0 4px 12px rgba(10,132,255,0.4);transition:all 0.2s}
+.v-btn:active{transform:scale(0.9)}
+.v-cnt{background:linear-gradient(145deg,#1c1e1e,#2c2e2e);border:2px solid #333;min-width:40px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-weight:700;font-size:16px;color:#fff}
+
+.actor-card{background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border:2px solid #0a84ff;box-shadow:0 8px 25px rgba(10,132,255,0.2);padding:20px;border-radius:20px;margin-bottom:16px;text-align:center;position:relative;overflow:hidden}
+.actor-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#0a84ff,rgba(10,132,255,0.5),#0a84ff)}
+
+#msg-scr{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#000 0%,#1a1a1e 100%);z-index:3000;padding:60px 24px;text-align:center;flex-direction:column;justify-content:center;align-items:center;animation:fadeIn 0.4s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#msg-text{font-size:20px;line-height:1.5;margin-bottom:40px;font-weight:500;letter-spacing:0.3px}
+#next-role-hint{font-size:16px;color:#0a84ff;text-transform:uppercase;font-weight:800;margin-bottom:16px;letter-spacing:1px}
+
+.welcome-card{background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border-radius:24px;padding:24px;margin-bottom:24px;border:1px solid rgba(10,132,255,0.3);box-shadow:0 12px 40px rgba(0,0,0,0.4);position:relative;overflow:hidden}
+.welcome-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(10,132,255,0.5),transparent,rgba(10,132,255,0.5))}
+.welcome-card h3{margin:0 0 16px 0;font-size:22px;font-weight:700;color:#fff;text-align:center}
+
+.reset-link{background:none;border:2px solid #ff453a;color:#ff453a;padding:10px 16px;border-radius:16px;font-size:14px;font-weight:700;transition:all 0.3s;text-transform:uppercase;letter-spacing:0.5px}
+.reset-link:hover{background:rgba(255,69,58,0.1)}
+
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);z-index:4000;padding:24px}
+.overlay-content{max-width:600px;margin:60px auto 0;background:linear-gradient(145deg,#000,#1a1a1e);border:1px solid #333;border-radius:28px;padding:32px;height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.8)}
+.log-item{padding:16px;border-bottom:1px solid #222;font-size:15px;line-height:1.6;transition:opacity 0.3s}
+.log-item:hover{background:rgba(10,132,255,0.05)}
+.log-night{color:#5e5ce6;font-weight:700;background:linear-gradient(145deg,rgba(94,92,230,0.2),rgba(94,92,230,0.1));padding:8px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;animation:fadeInGlow 0.5s ease-out}
+.log-day{color:#ff9f0a;font-weight:700;background:linear-gradient(145deg,rgba(255,159,10,0.2),rgba(255,159,10,0.1));padding:8px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;animation:fadeInGlow 0.5s ease-out}
+@keyframes fadeInGlow{0%{opacity:0;transform:scale(0.95)}100%{opacity:1;transform:scale(1)}}
+
+.summary-block{margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:12px}
+.summary-role-name{font-weight:800;color:#0a84ff;font-size:18px;margin-bottom:8px;display:block;letter-spacing:0.5px}
+.summary-player-line{font-size:15px;color:#fff;margin-left:16px;margin-bottom:4px;opacity:0.9}
+
+.role-header-card{background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border:3px solid #0a84ff;border-radius:28px;padding:32px;margin-bottom:24px;text-align:center;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(10,132,255,0.3)}
+.role-header-card::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:80px;height:4px;background:linear-gradient(90deg,#0a84ff,#30d158,#0a84ff);border-radius:2px}
+.role-header-card h3{margin:0 0 12px 0;font-size:28px;color:#fff;font-weight:800;letter-spacing:1px;text-shadow:0 2px 12px rgba(0,0,0,0.8)}
+.role-count-badge{display:inline-block;background:linear-gradient(145deg,rgba(10,132,255,0.3),rgba(10,132,255,0.2));color:#0a84ff;padding:8px 20px;border-radius:24px;font-weight:900;font-size:18px;border:1px solid rgba(10,132,255,0.5);letter-spacing:0.5px;box-shadow:0 4px 16px rgba(10,132,255,0.2)}
+
+.night-bg{animation:nightPulse 4s ease-in-out infinite alternate}
+@keyframes nightPulse{background:linear-gradient(135deg,#0F0F23 0%,#1A1A2E 50%,#16213E 100%)}
+.day-bg{animation:dayGlow 4s ease-in-out infinite alternate}
+@keyframes dayGlow{background:linear-gradient(135deg,#FFD23F 0%,#FF8A00 50%,#FF6B00 100%)}
+
+.fade-in{animation:fadeInUp 0.6s cubic-bezier(0.25,0.46,0.45,0.94)}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.counter-anim{animation:countUp 0.4s cubic-bezier(0.68,-0.55,0.265,1.55)}
+@keyframes countUp{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+.game-title{position:absolute;top:-60px;left:50%;transform:translateX(-50%);font-size:48px;font-weight:900;background:linear-gradient(135deg,#0a84ff,#30d158,#0a84ff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% 300%;animation:gradientShift 3s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.vote-leader{border-color:#ff9f0a!important;background:linear-gradient(145deg,#3a2c1c,#4a3c2c)!important;box-shadow:0 12px 32px rgba(255,159,10,0.4)!important}
+    </style>
 </head>
-<body>
+<body class="night-bg">
 <div id="msg-scr">
     <div id="next-role-hint"></div>
     <div id="msg-text"></div>
-    <button class="btn b-g" style="width:240px" onclick="closeMsg()">Понятно</button>
+    <button class="btn b-g" style="width:280px" onclick="closeMsg()">Понятно</button>
 </div>
 
 <div class="hdr">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="main-title">Мафия Помощник</h2>
-        <div style="display:flex; gap:8px">
-            <button class="reset-link" style="border-color:#0a84ff; color:#0a84ff" onclick="toggleLog()">Лог</button>
-            <button class="reset-link" onclick="confirmReset()">Сброс</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 id="main-title"><span class="game-title">🎭</span> Mafia Master</h2>
+        <div style="display:flex;gap:12px">
+            <button class="reset-link" onclick="toggleLog()">📜 Лог</button>
+            <button class="reset-link" onclick="confirmReset()">🔄 Сброс</button>
         </div>
     </div>
 </div>
 
-<div id="s1" class="s a">
-    <div class="welcome-card"><h3>Добро пожаловать! 🎩</h3><p>Добавьте минимум 3 игрока.</p></div>
+<div id="s1" class="s a fade-in">
+    <div class="welcome-card">
+        <h3>🎯 Подготовка к игре</h3>
+        <ul style="font-size:15px;padding-left:24px;color:#8e8e93;line-height:1.6;margin:20px 0 0 0">
+            <li><b>👥 Сбор:</b> Впишите имена всех участников.</li>
+            <li><b>🃏 Подготовка:</b> Раздайте карты игрокам живьем.</li>
+            <li><b>🌙 Знакомство:</b> Отметьте роли в приложении.</li>
+            <li><b>☀️ День 1:</b> Игроки знакомятся и рассказывают легенды.</li>
+        </ul>
+    </div>
     <div id="l1"></div>
     <div class="f-b">
-        <button class="btn b-b" onclick="addP()">+ Игрок</button>
-        <button class="btn b-g" onclick="if(ps.length>2)go(2)">Далее</button>
+        <button class="btn b-b" onclick="addP()">➕ Добавить игрока</button>
+        <button class="btn b-g" onclick="if(ps.length>=4){go(1.5)}else{showMsg('❌','Нужен минимум 4 игрока',null)}">▶️ Начать</button>
     </div>
 </div>
 
-<div id="s2" class="s">
+<div id="s1_5" class="s fade-in">
+    <div class="welcome-card">
+        <h3>🃏 Шаг 2: Раздача карт</h3>
+        <p style="font-size:16px;color:#8e8e93;line-height:1.6">1. Пересчитайте игроков.<br>2. Раздайте игровые карты.<br>3. В следующем окне настройте спецроли.</p>
+        <p style="font-size:16px;color:#ff9f0a;font-weight:800;margin-top:16px">🔒 Никому не показывайте экран!</p>
+    </div>
+    <div class="f-b">
+        <button class="btn b-o" onclick="go(1)">◀️ Назад</button>
+        <button class="btn b-g" onclick="go(2)">⚙️ Настроить роли</button>
+    </div>
+</div>
+
+<div id="s2" class="s fade-in">
     <div id="lp"></div>
-    <div style="text-align:center;padding:18px;background:#1c1c1e;border-radius:16px;margin-bottom:12px">
-        Всего: <b id="totalC">0</b> | Мирных: <b id="citC" style="color:#0a84ff">0</b>
+    <div style="text-align:center;padding:24px;background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border-radius:24px;margin-bottom:20px;border:1px solid #333;box-shadow:0 12px 32px rgba(0,0,0,0.4)">
+        Всего: <b id="totalC" style="font-size:24px;color:#fff">0</b> | 
+        Мирных: <b id="citC" style="font-size:24px;color:#0a84ff">0</b>
     </div>
     <div class="f-b">
-        <button class="btn b-o" onclick="go(1)">Назад</button>
-        <button class="btn b-g" onclick="checkR()">Далее</button>
+        <button class="btn b-o" onclick="go(1.5)">◀️ Назад</button>
+        <button class="btn b-g" onclick="checkR()">▶️ К раздаче ролей</button>
     </div>
 </div>
 
-<div id="s3" class="s">
-    <div id="roleLimitInfo" style="text-align:center;color:#8e8e93;margin-bottom:12px;font-size:14px"></div>
+<div id="s3" class="s fade-in">
+    <div id="roleLimitInfo"></div>
     <div id="l3"></div>
-    <div class="f-b"><button class="btn b-g" onclick="nextRS()">Подтвердить</button></div>
-</div>
-
-<div id="s4" class="s">
-    <div id="nightStatusPanel"></div>
-    <div id="voteStat" style="text-align:center;color:#8e8e93;margin-bottom:12px;font-size:14px"></div>
-    <div id="l4"></div>
     <div class="f-b">
-        <button id="skB" class="btn b-o" onclick="doAction(null)">Пропустить</button>
-        <button id="cfB" class="btn b-g" onclick="doAction(selId)">Следующий ход</button>
+        <button class="btn b-g" onclick="nextRS()">✅ Подтвердить роли</button>
     </div>
 </div>
 
-<div id="s5" class="s">
+<div id="s4" class="s fade-in">
+    <div id="nightStatusPanel"></div>
+    <div id="voteStat" style="text-align:center;color:#8e8e93;margin-bottom:16px;font-size:16px;font-weight:500"></div>
+    <div id="l4"></div>
+    <div class="f-b" id="game-controls" style="display:flex">
+        <button id="skB" class="btn b-o" onclick="doAction(null)">⏭️ Пропустить</button>
+        <button id="cfB" class="btn b-g" onclick="doAction(selId)">✅ Подтвердить</button>
+    </div>
+</div>
+
+<div id="s5" class="s fade-in">
     <div id="finalResultsPanel"></div>
-    <div style="padding:10px"><h4 style="margin-bottom:10px">Хронология игры 📜</h4></div>
-    <div id="finalLogList" style="background:#1c1c1e; border-radius:16px; padding:12px; margin-bottom:100px"></div>
-    <div class="f-b"><button class="btn b-b" onclick="location.reload()">Новая игра</button></div>
+    <div style="padding:16px"><h4 style="margin:0;font-weight:700;font-size:20px">📜 Хронология событий</h4></div>
+    <div id="finalLogList" style="background:linear-gradient(145deg,#1c1c1e,#2c2c2e);border-radius:24px;padding:24px;margin:0 16px 120px 16px;max-height:60vh;overflow-y:auto"></div>
+    <div class="f-b">
+        <button class="btn b-b" onclick="location.reload()">🎮 Новая игра</button>
+    </div>
 </div>
 
 <div id="log-overlay" class="overlay" onclick="if(event.target===this)toggleLog()">
-    <div class="overlay-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <h3 style="margin:0">История игры 📖</h3>
-            <button class="del-btn" onclick="toggleLog()" style="font-size:24px">✕</button>
+    <div class="overlay-content fade-in">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+            <h3 style="margin:0;font-size:24px;font-weight:800">📜 Полная история игры</h3>
+            <button class="del-btn" onclick="toggleLog()" style="font-size:28px;padding:12px">✕</button>
         </div>
         <div id="log-list"></div>
     </div>
 </div>
-<script src="script.js?v=1.6"></script>
+
+<script>
+const rOrder = ['Doctor', 'Mafia', 'Maniac', 'Detective'];
+const rD = {
+    Citizen: { n: 'Мирный', e: '😊', c: 'tag-Citizen', desc: 'Найдите преступников.' },
+    Mafia: { n: 'Мафия', e: '👺', c: 'tag-Mafia', desc: 'Устраните мирных.' },
+    Detective: { n: 'Комиссар', e: '🕵️‍♂️', c: 'tag-Detective', desc: 'Проверяет статус игрока.' },
+    Doctor: { n: 'Доктор', e: '💊', c: 'tag-Doctor', desc: 'Спасает одного игрока.' },
+    Maniac: { n: 'Маньяк', e: '🔪', c: 'tag-Maniac', desc: 'Играет за себя.' }
+};
+
+let ps = [], rs = { Mafia: 1, Maniac: 0, Detective: 1, Doctor: 1 }, 
+    activeRs = [], activeNRs = [], curRi = 0, curNi = 0, night = 0, 
+    acts = {}, selId = null, isDay = false, tiePs = [], 
+    msgCallback = null, lastDocId = null, checkedIds = [], gameLog = [];
+
+window.onload = () => { updateHeader(1); render(); document.body.classList.add('fade-in'); };
+
+function confirmReset() { if (confirm("🗑️ Сбросить всю игру?")) location.reload(); }
+
+function showMsg(t, txt, cb) { 
+    document.body.style.overflow = 'hidden';
+    document.getElementById('next-role-hint').innerHTML = String(t); 
+    document.getElementById('msg-text').innerHTML = String(txt); 
+    document.getElementById('msg-scr').style.display = 'flex'; 
+    msgCallback = cb; 
+}
+
+function closeMsg() { 
+    document.body.style.overflow = '';
+    document.getElementById('msg-scr').style.display = 'none'; 
+    if (msgCallback) { const t = msgCallback; msgCallback = null; t(); }
+}
+
+function toggleLog() {
+    const el = document.getElementById('log-overlay'), list = document.getElementById('log-list');
+    if (el.style.display === 'block') el.style.display = 'none';
+    else {
+        list.innerHTML = gameLog.map((i, idx) => `<div class="log-item fade-in" style="animation-delay:${idx*0.05}s">${i.text}</div>`).join('');
+        el.style.display = 'block';
+        list.scrollTop = list.scrollHeight;
+    }
+}
+
+function addL(text) { gameLog.push({ text: String(text) }); }
+function getPN(idx) { return (ps[idx] && ps[idx].n) ? ps[idx].n : `Игрок №${idx + 1}`; }
+
+function go(n) { 
+    document.querySelectorAll('.s').forEach(x => x.classList.remove('a')); 
+    let id = (n === 1.5) ? 's1_5' : 's' + n;
+    const target = document.getElementById(id);
+    if(target) {
+        target.classList.add('a', 'fade-in'); 
+        window.scrollTo(0, 0); 
+        setTimeout(() => updateHeader(n), 200);
+        if (n === 3) renderS3(); 
+        else if (n === 4) renderGame(); 
+        else if (n === 5) showWinUI();
+        else render();
+    }
+}
+
+function updateHeader(n) {
+    let title = "";
+    if (n === 1) title = `👥 Игроков: ${ps.length}`;
+    else if (n === 1.5) title = "📋 Инструкция";
+    else if (n === 2) title = "⚙️ Настройка ролей";
+    else if (n === 3) title = "🎭 Раздача ролей";
+    else if (n === 4) title = isDay ? (night === 1 ? "🌅 День 1: Знакомство" : `☀️ День ${night}`) : `🌙 Ночь ${night}`;
+    else title = "🏆 Финал";
+    document.getElementById('main-title').innerHTML = `<span class="game-title">${title}</span>`;
+    
+    // Тематический фон
+    document.body.className = isDay && night !== 1 ? 'day-bg' : 'night-bg';
+}
+
+function addP() { 
+    ps.push({ n: '', r: 'Citizen', out: false, v: 0 }); 
+    render(); 
+    updateHeader(1); 
+    setTimeout(() => {
+        const input = document.querySelector(`input[oninput*="ps[${ps.length-1}]"]`);
+        if (input) input.focus();
+    }, 300);
+}
+
+function delP(i) { 
+    ps.splice(i, 1); 
+    render(); 
+    updateHeader(1); 
+}
+
+function render() {
+    const l1 = document.getElementById('l1'), lp = document.getElementById('lp');
+    if (l1 && document.getElementById('s1').classList.contains('a')) {
+        l1.innerHTML = ps.map((p, i) => 
+            `<div class="r fade-in" style="animation-delay:${i*0.05}s">
+                <b class="p-num">${i+1}</b>
+                <input value="${p.n}" oninput="ps[${i}].n=this.value" placeholder="Имя ${i+1}...">
+                <button class="del-btn" onclick="delP(${i})">✕</button>
+            </div>`
+        ).join('');
+    }
+    if (lp && document.getElementById('s2').classList.contains('a')) {
+        lp.innerHTML = Object.keys(rs).map((r, idx) => 
+            `<div class="r fade-in actor-card" style="animation-delay:${idx*0.1}s">
+                <span style="font-size:24px;margin-right:16px">${rD[r].e}</span>
+                <span style="font-size:20px;font-weight:700">${rD[r].n}</span>
+                <div class="v-wrap" style="margin-left:auto">
+                    <button class="v-btn" onclick="rs['${r}']=Math.max(0,rs['${r}']-1);render()">−</button>
+                    <div class="v-cnt counter-anim">${rs[r]}</div>
+                    <button class="v-btn" onclick="rs['${r}']++;render()">+</button>
+                </div>
+            </div>`
+        ).join('');
+        document.getElementById('totalC').innerText = ps.length; 
+        document.getElementById('citC').innerText = Math.max(0, ps.length - Object.values(rs).reduce((a, b) => a + b, 0));
+    }
+}
+
+function checkR() { 
+    if (Object.values(rs).reduce((a,b)=>a+b,0) >= ps.length) { 
+        showMsg("❌ Слишком много ролей!", "Уменьшите количество спецролей.", null); 
+        return; 
+    }
+    curRi = 0; 
+    ps.forEach(p => { p.r = 'Citizen'; p.out = false; p.v = 0; }); 
+    activeRs = rOrder.filter(r => rs[r] > 0); 
+    showMsg("🌙 Ночь знакомства", "Ведущий: «Город засыпает». Отмечайте роли по очереди.", () => go(3));
+}
+
+function renderS3() {
+    let r = activeRs[curRi]; 
+    if(!r) return;
+    let count = ps.filter(p => p.r === r).length;
+    document.getElementById('roleLimitInfo').innerHTML = 
+        `<div class="role-header-card">
+            <h3>${rD[r].e} ${rD[r].n}</h3>
+            <div class="role-count-badge">${count} из ${rs[r]} игроков</div>
+        </div>`;
+    document.getElementById('l3').innerHTML = ps.map((p, i) => {
+        let isSel = (p.r === r), isOther = (p.r !== 'Citizen' && p.r !== r);
+        return `<div class="r ${isSel?'sel':''} ${isOther?'isOut':''}" onclick="${isOther?'':`setRole(${i},'${r}')`} style="animation-delay:${i*0.05}s">
+            <b class="p-num">${i+1}</b>
+            <div class="p-info">
+                <span class="p-name">${p.n||'Игрок '+(i+1)}</span>
+            </div>
+            ${p.r!=='Citizen' ? `<span class="tag ${rD[p.r].c} tag-right">${rD[p.r].n}</span>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function setRole(i, r) { 
+    if (ps[i].r === r) ps[i].r = 'Citizen';
+    else if (ps[i].r === 'Citizen') {
+        if (rs[r] === 1) ps.forEach(p => { if(p.r === r) p.r = 'Citizen'; });
+        if (ps.filter(p => p.r === r).length < rs[r]) ps[i].r = r;
+    }
+    renderS3(); 
+}
+
+function nextRS() { 
+    if (ps.filter(p => p.r === activeRs[curRi]).length === rs[activeRs[curRi]]) { 
+        curRi++; 
+        if (curRi >= activeRs.length) startFirstDay(); 
+        else renderS3(); 
+    } else { 
+        showMsg("❌ Недостаточно!", `Нужно выбрать ${rs[activeRs[curRi]]} ${rD[activeRs[curRi]].n}`, null); 
+    }
+}
+
+function startFirstDay() {
+    isDay = true; night = 1; 
+    addL(`<span class="log-day">🌅 --- ДЕНЬ 1: Знакомство ---</span>`); 
+    go(4); 
+}
+
+function startNight() { 
+    isDay = false; curNi = 0; acts = {}; selId = null; tiePs = []; 
+    activeNRs = rOrder.filter(r => rs[r] > 0 && ps.some(p => p.r === r && !p.out)); 
+    addL(`<span class="log-night">🌙 --- НОЧЬ ${night} ---</span>`); 
+    go(4); 
+}
+
+function renderGame() {
+    updateHeader(4); 
+    const vS = document.getElementById('voteStat'), nP = document.getElementById('nightStatusPanel'), l4 = document.getElementById('l4'), ctrl = document.getElementById('game-controls');
+    
+    if (!isDay) {
+        let cR = activeNRs[curNi]; 
+        if(!cR) { endNight(); return; }
+        
+        ctrl.style.display = 'flex';
+        nP.innerHTML = `<div class="role-header-card">
+            <h3>${rD[cR].e} ${rD[cR].n}</h3>
+            <div class="role-count-badge">${rD[cR].desc}</div>
+        </div>`;
+        document.getElementById('cfB').innerText = (curNi === activeNRs.length - 1) ? "🌅 Завершить ночь" : "▶️ Следующая роль";
+        document.getElementById('cfB').style.display = (selId !== null) ? "flex" : "none";
+        document.getElementById('skB').style.display = (selId === null) ? "flex" : "none";
+        
+        l4.innerHTML = ps.map((p, i) => {
+            let ex = '', st = '', cl = true;
+            if (p.out) { st = 'isOut'; cl = false; }
+            if (cR === 'Doctor' && i === lastDocId) { ex = '(Не подряд)'; st = 'locked'; cl = false; }
+            if (cR === 'Detective' && (checkedIds.includes(i) || (p.r === 'Detective' && !p.out))) { 
+                ex = (p.r === 'Detective' ? 'Вы' : 'Проверен'); st = 'locked'; cl = false; 
+            }
+            return `<div class="r ${st} ${selId === i ? 'sel' : ''}" onclick="${cl ? `clickP(${i})` : ''}" style="animation-delay:${i*0.05}s">
+                <b class="p-num">${i+1}</b>
+                <div class="p-info">
+                    <span class="p-name">${p.n||'Игрок '+(i+1)}</span>
+                </div>
+                <span class="tag ${rD[p.r].c}">${rD[p.r].n}</span>
+                ${ex ? `<small style="margin-left:8px;color:#ff9f0a;font-weight:500">${ex}</small>` : ''}
+            </div>`;
+        }).join('');
+    } else if (night === 1) {
+        ctrl.style.display = 'none';
+        nP.innerHTML = `<div class="welcome-card role-header-card" style="border-color:#ff9f0a">
+            <h3>☀️ День знакомства</h3>
+        </div>`;
+        l4.innerHTML = ps.map((p, i) => 
+            `<div class="r fade-in" style="animation-delay:${i*0.05}s">
+                <b class="p-num">${i+1}</b>
+                <div class="p-info">
+                    <span class="p-name">${getPN(i)}</span>
+                </div>
+                <span class="tag ${rD[p.r].c} tag-right">${rD[p.r].n}</span>
+            </div>`
+        ).join('') + 
+        `<div class="actor-card" style="margin-top:32px;text-align:center">
+            <button class="btn b-b" style="width:100%;font-size:18px" onclick="night++; startNight()">
+                🌙 Начать первую боевую ночь
+            </button>
+        </div>`;
+    } else {
+        ctrl.style.display = 'flex';
+        let tV = ps.reduce((s, p) => s + p.v, 0), aC = ps.filter(p => !p.out).length;
+        vS.innerHTML = `<span style="font-size:18px;font-weight:700">Голосов: <span class="counter-anim">${tV}</span> / ${aC}</span>`;
+        nP.innerHTML = "";
+        document.getElementById('cfB').innerText = "⚖️ Итоги дня";
+        document.getElementById('cfB').style.display = (tV > 0) ? "flex" : "none";
+        document.getElementById('skB').style.display = (tV === 0 && tiePs.length === 0) ? "flex" : "none"; 
+        
+        l4.innerHTML = ps.map((p, i) => {
+            let st = (p.out || (tiePs.length > 0 && !tiePs.includes(i))) ? 'isOut' : '';
+            let leaderClass = (p.v === Math.max(...ps.filter(p => !p.out).map(p => p.v)) && p.v > 0 && !p.out) ? 'vote-leader' : '';
+            return `<div class="r ${st} ${leaderClass}" style="animation-delay:${i*0.05}s">
+                <b class="p-num">${i+1}</b>
+                <div class="p-info">
+                    <span class="p-name">${getPN(i)}</span>
+                </div>
+                <span class="tag ${rD[p.r].c} tag-right" style="margin-right:12px">${rD[p.r].n}</span>
+                <div class="v-wrap">
+                    <button class="v-btn" onclick="vote(${i},-1)">−</button>
+                    <div class="v-cnt counter-anim">${p.v}</div>
+                    <button class="v-btn" onclick="vote(${i},1)">+</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+}
+
+function clickP(i) { 
+    selId = (selId === i) ? null : i; 
+    renderGame(); 
+}
+
+function vote(i, v) { 
+    let tV = ps.reduce((s, p) => s + p.v, 0), aC = ps.filter(p => !p.out).length; 
+    if (v > 0 && tV < aC) { ps[i].v++; }
+    if (v < 0 && ps[i].v > 0) { ps[i].v--; }
+    renderGame(); 
+}
+
+function doAction(id) {
+    if (isDay) {
+        let cand = ps.filter((p, idx) => !p.out && (tiePs.length === 0 || tiePs.includes(idx)));
+        let maxV = Math.max(...cand.map(p => p.v)), leaders = cand.filter(p => p.v === maxV);
+        if (maxV === 0) { 
+            showMsg("🌙 День окончен", "Никто не уходит. Город засыпает.", () => { night++; startNight(); }); 
+            return; 
+        }
+        if (leaders.length === 1) { 
+            let vic = leaders[0]; 
+            let vicIdx = ps.indexOf(vic);
+            vic.out = true; 
+            addL(`⚖️ <span style="color:#ff9f0a">Покинул город:</span> <b>${getPN(vicIdx)}</b>`);
+            showMsg("🌅 Итоги дня", `Жители выгнали <b>${getPN(vicIdx)}</b>.`, () => { 
+                if (!checkWin()) { night++; startNight(); } 
+            });
+        } else { 
+            if (tiePs.length > 0) { 
+                addL(`⚖️ <span style="color:#ff453a">Вторая ничья:</span> Никто не уходит.`); 
+                showMsg("🌙 Ничья", "Город засыпает без жертв.", () => { night++; startNight(); }); 
+            }
+            else { 
+                tiePs = leaders.map(p => ps.indexOf(p)); 
+                ps.forEach(p => p.v = 0); 
+                showMsg("⚖️ Ничья!", "Переголосование. Установите новые голоса.", () => renderGame()); 
+            } 
+        }
+    } else {
+        acts[activeNRs[curNi]] = id; 
+        curNi++; 
+        selId = null;
+        if (curNi >= activeNRs.length) endNight(); 
+        else renderGame();
+    }
+}
+
+function endNight() {
+    let savedId = acts['Doctor'], targets = []; 
+    lastDocId = savedId;
+    
+    if (savedId !== null) addL(`💊 <span style="color:#5e5ce6">Доктор лечил:</span> <b>${getPN(savedId)}</b>`);
+    
+    ['Mafia', 'Maniac'].forEach(r => {
+        let t = acts[r];
+        if (t !== null && t !== undefined) {
+            addL(`${rD[r].e} <span class="${rD[r].c.replace('tag-','')}">${rD[r].n}</span> стрелял в: <b>${getPN(t)}</b>`);
+            if (t !== savedId) targets.push(t);
+        }
+    });
+    
+    let det = acts['Detective'];
+    if (det !== null && det !== undefined) {
+        let evil = (ps[det].r === 'Mafia' || ps[det].r === 'Maniac');
+        addL(`🔍 <span style="color:#30d158">Комиссар</span> проверил <b>${getPN(det)}</b>: <span style="color:${evil?'#ff453a':'#30d158'}">${evil?'🖤 ЧЕРНЫЙ':'❤️ КРАСНЫЙ'}</span>`);
+        if (!checkedIds.includes(det)) checkedIds.push(det);
+    }
+    
+    let killed = [...new Set(targets)];
+    killed.forEach(idx => ps[idx].out = true);
+    let mText = killed.length ? "Погибли: " + killed.map(idx => `<b>${getPN(idx)}</b>`).join(", ") : "🌙 Ночь прошла без жертв.";
+    addL(`<span class="log-day">☀️ УТРО ${night}: ${mText}</span>`);
+    
+    isDay = true; 
+    ps.forEach(p => p.v = 0); 
+    tiePs = [];
+    if (!checkWin()) showMsg("☀️ Утро наступило", mText, () => go(4));
+}
+
+function checkWin() {
+    let alive = ps.filter(p => !p.out), 
+        m = alive.filter(p => p.r === 'Mafia').length, 
+        mn = alive.filter(p => p.r === 'Maniac').length, 
+        c = alive.length - m - mn;
+    if (m > 0 && m >= (c + mn)) { 
+        showWin("👺 Победа Мафии! Город пал во тьму."); 
+        return true; 
+    }
+    if (mn > 0 && alive.length <= 2 && m === 0) { 
+        showWin("🔪 Победа Маньяка! Последний выжил."); 
+        return true; 
+    }
+    if (m === 0 && mn === 0) { 
+        showWin("😊 Победа Города! Мир восстановлен."); 
+        return true; 
+    }
+    return false;
+}
+
+function showWin(t) { 
+    addL(`🏆 <span style="font-size:18px">${t}</span>`); 
+    go(5); 
+}
+
+function showWinUI() {
+    const winT = gameLog[gameLog.length-1].text;
+    document.getElementById('finalResultsPanel').innerHTML = 
+        `<div class="role-header-card" style="border:4px solid #30d158;background:linear-gradient(145deg,#1c3d25,#2a4f30);box-shadow:0 20px 60px rgba(48,209,88,0.4)">
+            <h3 style="color:#30d158;font-size:32px">${winT}</h3>
+        </div>`;
+    document.getElementById('finalLogList').innerHTML = gameLog.map((i, idx) => 
+        `<div class="log-item fade-in" style="animation-delay:${idx*0.03}s">${i.text}</div>`
+    ).join('');
+}
+</script>
 </body>
 </html>
