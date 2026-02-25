@@ -1,0 +1,347 @@
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+body {
+    font-family:-apple-system, system-ui, sans-serif;
+    background:#000;
+    color:#fff;
+    margin:0;
+    padding:20px 16px 100px 16px;
+    line-height:1.4;
+}
+
+.s {display:none}
+.s.a {display:block}
+
+.hdr {
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    background:rgba(28,28,30,0.95);
+    backdrop-filter:blur(20px);
+    z-index:1000;
+    padding:16px 20px;
+    border-bottom:1px solid #38383a;
+}
+
+h2 {
+    font-weight:600;
+    font-size:20px;
+    margin:0;
+}
+
+.r {
+    background:#1c1c1e;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    border:1px solid #38383a;
+    transition: all 0.2s ease;
+    min-height:60px;
+    cursor:pointer;
+}
+
+.r:active {
+    background:#2c2c2e;
+    border-color:#0a84ff;
+}
+
+.p-num {
+    width:32px;
+    font-weight:600;
+    color:#8e8e93;
+    flex-shrink:0;
+    font-size:17px;
+}
+
+.p-info {
+    flex:1;
+    padding-left:12px;
+    overflow:hidden;
+}
+
+.p-name {
+    font-size:17px;
+    color:#fff;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.sel {
+    border-color:#30d158 !important;
+    background:#1c3d25 !important;
+}
+
+.isOut {
+    opacity:0.4;
+    pointer-events:none;
+}
+
+.locked {
+    opacity:0.5;
+    pointer-events:none;
+    border-style:dashed;
+}
+
+.btn {
+    border:none;
+    border-radius:12px;
+    padding:16px 20px;
+    width:100%;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    font-size:16px;
+    text-align:center;
+    min-height:52px;
+}
+
+.b-b {background:#0a84ff}
+.b-g {background:#30d158}
+.b-o {background:#3c3c3e}
+.b-g:active, .b-b:active, .b-o:active {opacity:0.8}
+
+.f-b {
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:rgba(28,28,30,0.95);
+    backdrop-filter:blur(20px);
+    padding:20px;
+    display:flex;
+    gap:12px;
+    border-top:1px solid #38383a;
+    z-index:1000;
+}
+
+input {
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:17px;
+    flex:1;
+    border-bottom:1px solid #38383a;
+    outline:none;
+    padding:4px 0;
+}
+
+input:focus {
+    border-bottom-color:#0a84ff;
+}
+
+.del-btn {
+    background:#3c3c3e;
+    border:none;
+    color:#ff3b30;
+    font-weight:600;
+    cursor:pointer;
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:16px;
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.tag {
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:8px;
+    text-transform:uppercase;
+    font-weight:700;
+    margin-left:8px;
+}
+
+.tag-Mafia {background:#ff453a;color:#fff}
+.tag-Detective {background:#30d158;color:#fff}
+.tag-Citizen {background:#8e8e93;color:#fff}
+.tag-Doctor {background:#5e5ce6;color:#fff}
+.tag-Maniac {background:#af52de;color:#fff}
+
+.v-wrap {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:auto;
+}
+
+.v-btn {
+    width:36px;
+    height:36px;
+    background:#0a84ff;
+    border-radius:8px;
+    border:none;
+    color:#fff;
+    font-weight:600;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.v-cnt {
+    background:#1c1c1e;
+    border:1px solid #38383a;
+    width:36px;
+    height:36px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+    font-size:15px;
+}
+
+#msg-scr {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.9);
+    z-index:2000;
+    padding:60px 24px;
+    text-align:center;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+#msg-text {
+    font-size:18px;
+    margin-bottom:32px;
+    max-width:90%;
+    line-height:1.4;
+}
+
+#next-role-hint {
+    font-size:14px;
+    color:#0a84ff;
+    text-transform:uppercase;
+    font-weight:700;
+    margin-bottom:16px;
+}
+
+.welcome-card {
+    background:#1c1c1e;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    border:1px solid #38383a;
+}
+
+.welcome-card h3 {
+    margin:0 0 16px 0;
+    font-size:18px;
+    font-weight:600;
+}
+
+.welcome-card ul {
+    margin:0;
+    padding-left:20px;
+    font-size:15px;
+    color:#8e8e93;
+}
+
+.welcome-card li {
+    margin-bottom:8px;
+}
+
+.reset-link {
+    background:none;
+    border:1px solid #ff3b30;
+    color:#ff3b30;
+    padding:8px 16px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+}
+
+.overlay {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    z-index:3000;
+    padding:20px;
+}
+
+.overlay-content {
+    max-width:500px;
+    margin:60px auto 0;
+    background:#1c1c1e;
+    border-radius:20px;
+    border:1px solid #38383a;
+    height:70vh;
+    overflow-y:auto;
+}
+
+.close-btn {
+    background:none;
+    border:none;
+    color:#8e8e93;
+    font-size:24px;
+    cursor:pointer;
+    padding:8px;
+}
+
+.log-item {
+    padding:16px;
+    border-bottom:1px solid #38383a;
+    font-size:14px;
+}
+
+.stats-bar {
+    text-align:center;
+    padding:20px;
+    background:#1c1c1e;
+    border-radius:14px;
+    margin-bottom:20px;
+    border:1px solid #38383a;
+    font-size:16px;
+}
+
+.role-header-card {
+    background:#1c1c1e;
+    border:2px solid #0a84ff;
+    border-radius:16px;
+    padding:24px;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.role-header-card h3 {
+    margin:0 0 12px 0;
+    font-size:20px;
+    font-weight:600;
+}
+
+.role-count-badge {
+    display:inline-block;
+    background:rgba(10,132,255,0.2);
+    color:#0a84ff;
+    padding:6px 16px;
+    border-radius:20px;
+    font-weight:700;
+    font-size:15px;
+    border:1px solid rgba(10,132,255,0.3);
+}
+
+#finalLogList {
+    background:#1c1c1e;
+    border-radius:16px;
+    padding:20px;
+    margin:0 16px 100px 16px;
+    max-height:50vh;
+    overflow-y:auto;
+}
