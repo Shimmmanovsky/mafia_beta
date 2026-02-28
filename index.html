@@ -3,105 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-    <title>Mafia Moderator</title>
+    <title>Mafia Moderator Helper</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="msg-scr">
-    <div id="next-role-hint"></div>
-    <div id="msg-text"></div>
-    <button class="btn b-g" onclick="closeMsg()">Понятно</button>
-</div>
+    <div id="msg-scr">
+        <div id="next-role-hint"></div>
+        <div id="msg-text"></div>
+        <button class="btn b-g" style="width:240px" onclick="closeMsg()">Понятно</button>
+    </div>
 
-<div class="hdr">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 id="main-title">Mafia Moderator</h2>
-        <div style="display:flex; gap:8px">
-            <button class="reset-link" onclick="toggleLog()">Лог</button>
-            <button class="reset-link" onclick="confirmReset()">Сброс</button>
+    <div class="hdr">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="main-title"></h2>
+            <div style="display:flex; gap:8px">
+                <button class="reset-link" style="border-color:#0a84ff; color:#0a84ff" onclick="toggleLog()">Лог</button>
+                <button class="reset-link" onclick="confirmReset()">Сброс</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="s1" class="s a">
-    <div class="welcome-card">
-        <h3>Правила и порядок</h3>
-        <ul>
-            <li><b>Сбор:</b> Впишите имена всех участников.</li>
-            <li><b>Подготовка:</b> Раздайте карты игрокам живьем.</li>
-            <li><b>Знакомство:</b> Отметьте роли в приложении.</li>
-            <li><b>День 1:</b> Игроки знакомятся и рассказывают легенды.</li>
-        </ul>
-    </div>
-    <div id="l1"></div>
-    <div class="f-b">
-        <button class="btn b-b" onclick="addP()">+ Игрок</button>
-        <button class="btn b-g" onclick="if(ps.length>=4){go(1.5)}else{alert('Минимум 4 игрока')}">Далее</button>
-    </div>
-</div>
-
-<div id="s1_5" class="s">
-    <div class="welcome-card">
-        <h3>Шаг 2: Раздача карт</h3>
-        <p>1. Пересчитайте игроков.<br>2. Раздайте игровые карты.<br>3. В следующем окне укажите, сколько спецролей участвует в игре.</p>
-        <p style="color:#ff3b30; font-weight:bold">Никому не показывайте экран!</p>
-    </div>
-    <div class="f-b">
-        <button class="btn b-o" onclick="go(1)">Назад</button>
-        <button class="btn b-g" onclick="go(2)">Настроить роли</button>
-    </div>
-</div>
-
-<div id="s2" class="s">
-    <div id="lp"></div>
-    <div class="stats-bar">
-        Всего: <b id="totalC">0</b> | Мирных: <b id="citC">0</b>
-    </div>
-    <div class="f-b">
-        <button class="btn b-o" onclick="go(1.5)">Назад</button>
-        <button class="btn b-g" onclick="checkR()">К знакомству</button>
-    </div>
-</div>
-
-<div id="s3" class="s">
-    <div id="roleLimitInfo"></div>
-    <div id="l3"></div>
-    <div class="f-b">
-        <button class="btn b-g" onclick="nextRS()">Подтвердить</button>
-    </div>
-</div>
-
-<div id="s4" class="s">
-    <div id="nightStatusPanel"></div>
-    <div id="voteStat"></div>
-    <div id="l4"></div>
-    <div class="f-b" id="game-controls">
-        <button id="skB" class="btn b-o" onclick="doAction(null)">Пропустить</button>
-        <button id="cfB" class="btn b-g" onclick="doAction(selId)">Подтвердить</button>
-    </div>
-</div>
-
-<div id="s5" class="s">
-    <div id="finalResultsPanel"></div>
-    <div style="padding:10px">
-        <h4>Хронология событий</h4>
-    </div>
-    <div id="finalLogList"></div>
-    <div class="f-b">
-        <button class="btn b-b" onclick="location.reload()">Новая игра</button>
-    </div>
-</div>
-
-<div id="log-overlay" class="overlay" onclick="if(event.target===this)toggleLog()">
-    <div class="overlay-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <h3>История игры</h3>
-            <button class="close-btn" onclick="toggleLog()">✕</button>
+    <div id="s1" class="s a">
+        <div class="welcome-card">
+            <h3 style="color: var(--accent-blue); margin-bottom: 12px;">Добро пожаловать в Семью 🕵️‍♂️</h3>
+            <p style="font-size: 15px; line-height: 1.6; color: #fff; margin-bottom: 15px;">Сегодня ты — демиург и вершитель судеб. Твоя миссия — провести этот город через ночь и не дать ему погибнуть (или наоборот).</p>
         </div>
-        <div id="log-list"></div>
+        <div id="l1"></div>
+        <div class="f-b">
+            <button class="btn b-b" onclick="addP()">+ Добавить душу</button>
+            <button class="btn b-g" onclick="if(ps.length>=4){go(1.5)}else{alert('Нужно хотя бы 4 игрока')}">К делу</button>
+        </div>
     </div>
-</div>
 
-<script src="script.js"></script>
+    <div id="s1_5" class="s">
+        <div class="welcome-card">
+            <h3 style="color: #fff; margin-bottom: 12px;">Карты на стол 🃏</h3>
+            <p style="font-size: 15px; line-height: 1.6; color: #fff; margin-bottom: 15px;">Настало время самого ответственного момента — раздачи ролей. Убедись, что все смотрят в свои карты с невозмутимыми лицами.</p>
+            <div style="padding: 0; margin-bottom: 15px;">
+                <p style="font-size: 13px; color: var(--text-dim); margin: 0; line-height: 1.6;">
+                    <b>Протокол ведущего:</b><br>
+                    1. Пересчитай игроков (математика коварна).<br>
+                    2. Раздай колоду так, чтобы никто не подглядывал. <br>
+                    3. Дальше укажи мне, какие роли ты вбросил в игру.
+                </p>
+            </div>
+            <p style="font-size: 14px; color: var(--accent-red); font-weight: bold; text-align: center;">⚠️ Твоя тайна — это их жизнь.</p>
+        </div>
+        <div class="f-b">
+            <button class="btn b-o" onclick="go(1)">Назад</button>
+            <button class="btn b-g" onclick="go(2)">Роли</button>
+        </div>
+    </div>
+
+    <div id="s2" class="s">
+        <div id="lp"></div>
+        <div style="text-align:center;padding:18px;background:#1c1c1e;border-radius:16px;margin-bottom:12px">
+            Всего: <b id="totalC">0</b> | Мирных: <b id="citC" style="color:#0a84ff">0</b>
+        </div>
+        <div class="f-b">
+            <button class="btn b-o" onclick="go(1.5)">Назад</button>
+            <button class="btn b-g" onclick="checkR()">К знакомству</button>
+        </div>
+    </div>
+
+    <div id="s3" class="s">
+        <div id="roleLimitInfo"></div>
+        <div id="l3"></div>
+        <div class="f-b"><button class="btn b-g" onclick="nextRS()">Подтвердить</button></div>
+    </div>
+
+    <div id="s4" class="s">
+        <div id="nightStatusPanel"></div>
+        <div id="voteStat"></div>
+        <div id="l4"></div>
+        <div class="f-b" id="game-controls">
+            <button id="skB" class="btn b-o" onclick="doAction(null)">Пропустить</button>
+            <button id="cfB" class="btn b-g" onclick="doAction(selId)">Подтвердить</button>
+        </div>
+    </div>
+
+    <div id="s5" class="s">
+        <div id="finalResultsPanel"></div>
+        <div id="finalLogList" style="background:#1c1c1e; border-radius:16px; padding:12px; margin-bottom:100px"></div>
+        <div class="f-b"><button class="btn b-b" onclick="location.reload()">Новая игра</button></div>
+    </div>
+
+    <div id="log-overlay" class="overlay" onclick="if(event.target===this)toggleLog()">
+        <div class="overlay-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                <h3 style="margin:0">История игры 📖</h3>
+                <button class="del-btn" onclick="toggleLog()" style="font-size:24px; background:none; border:none; margin:0">✕</button>
+            </div>
+            <div id="log-list"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
