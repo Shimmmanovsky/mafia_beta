@@ -94,7 +94,7 @@ class GameEngine {
      */
     isRoleConfigValid() {
         const totalRoles = Object.values(this.roleConfig).reduce((a, b) => a + b, 0);
-        return totalRoles >= 4 && totalRoles < this.players.length;
+        return totalRoles > 0 && totalRoles < this.players.length;
     }
 
     // ========== РАСПРЕДЕЛЕНИЕ РОЛЕЙ ==========
