@@ -64,6 +64,10 @@ function go(screenNum) {
  * Проверить конфигурацию ролей и начать распределение (старое имя)
  */
 function checkR() {
+    console.log('Starting role check with:', {
+        playersCount: gameEngine.players.length,
+        roleConfig: gameEngine.roleConfig
+    });
     if (!gameEngine.isRoleConfigValid()) {
         alert("Слишком много ролей для такого маленького города! ⚰️");
         return;

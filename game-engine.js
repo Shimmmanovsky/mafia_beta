@@ -94,6 +94,12 @@ class GameEngine {
      */
     isRoleConfigValid() {
         const totalRoles = Object.values(this.roleConfig).reduce((a, b) => a + b, 0);
+        console.log('Role config validation:', {
+            roleConfig: this.roleConfig,
+            totalRoles: totalRoles,
+            playersCount: this.players.length,
+            isValid: totalRoles > 0 && totalRoles < this.players.length
+        });
         return totalRoles > 0 && totalRoles < this.players.length;
     }
 
