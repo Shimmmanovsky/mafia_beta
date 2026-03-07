@@ -164,7 +164,7 @@ const UIManager = {
             
             return `
                 <div class="r ${isSel ? 'sel-' + currentRole : ''} ${isOther ? 'isOut' : ''}" 
-                     onclick="${isOther ? '' : `setPlayerRole(${i}, '${currentRole}')`}">
+                     onclick="${isOther ? '' : `setRole(${i}, '${currentRole}')`}">
                     <b class="p-num">${i + 1}</b>
                     <div class="p-info"><span class="p-name">${p.name}</span></div>
                     ${p.role !== 'Citizen' 
