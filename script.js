@@ -222,7 +222,9 @@ function doAction(targetId) {
         // Провести голосование
         const result = gameEngine.castVote();
 
-        if (result.phase === 'EXILE') {
+        if (result.phase === 'WIN') {
+            UIManager.showMessage("Финал 🏆", result.message, () => UIManager.showScreen(5));
+        } else if (result.phase === 'EXILE') {
             const victimIdx = result.exiled;
             UIManager.showMessage(
                 "Итоги дня",

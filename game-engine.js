@@ -163,6 +163,10 @@ class GameEngine {
         this.nightActions = {};
         this.selectedPlayerId = null;
         
+        // Обновить активные ночные роли (только те, у которых есть живые игроки)
+        this.activeNightRoles = ConfigUtils.getActiveNightRoles(this.roleConfig)
+            .filter(role => this.getAlivePlayersWithRole(role).length > 0);
+        
         this.log(`<span class="log-night">--- НОЧЬ ${this.currentNight} ---</span>`);
         
         return {
@@ -335,6 +339,12 @@ class GameEngine {
             victim.isEliminated = true;
             const victimIdx = this.players.indexOf(victim);
             this.log(`⚖️ Покинул город: <b>${this.getPlayerName(victimIdx)}</b>`);
+            
+            // Проверить победу после изгнания
+            const winCondition = this.checkWinCondition();
+            if (winCondition) {
+                return { phase: 'WIN', ...winCondition };
+            }
             
             return {
                 phase: 'EXILE',
