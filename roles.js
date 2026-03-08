@@ -49,6 +49,27 @@ const RoleHandlers = {
     },
 
     /**
+     * CITIZEN (Мирный)
+     * - Никаких действий
+     */
+    Citizen: {
+        canSelectTarget(targetIdx, gameState) {
+            return false; // Мирные не выбирают цели
+        },
+
+        onNightAction(targetIdx, gameState) {
+            return {
+                type: 'CITIZEN_ACTION',
+                message: `😊 Мирный спал спокойно`
+            };
+        },
+
+        getRestrictions() {
+            return {};
+        }
+    },
+
+    /**
      * MAFIA (Мафия)
      * - Может убивать одного игрока за ночь
      * - Может пропустить

@@ -235,7 +235,7 @@ const UIManager = {
 
                 return `
                     <div class="r ${status} ${window.selId === i ? 'sel-' + currentRole : ''}" 
-                         onclick="${canClick ? `selectNightTarget(${i})` : ''}">
+                         onclick="${canClick ? `clickP(${i})` : ''}">
                         <b class="p-num">${i + 1}</b>
                         <div class="p-info"><span class="p-name">${p.name}</span></div>
                         <span class="tag ${GAME_CONFIG.ROLES[p.role].cssClass}">${GAME_CONFIG.ROLES[p.role].displayName}</span>

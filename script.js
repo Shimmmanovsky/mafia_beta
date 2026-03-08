@@ -264,6 +264,11 @@ function doAction(targetId) {
             
             if (!result) return;
             
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
+            
             if (result.phase === 'END_NIGHT') {
                 UIManager.showMessage(
                     `${currentRoleInfo.displayName} засыпает 💤`,
